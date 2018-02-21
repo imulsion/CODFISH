@@ -1,6 +1,7 @@
 from __future__ import print_function
 import httplib2
 import os
+import json
 
 from apiclient import discovery
 from oauth2client import client
@@ -66,6 +67,7 @@ def main():
     # maximum=datetime.datetime(2018, 2, 21, 21, 00, 00, 000000).isoformat() + 'Z'
     # print(maximum)
     events=[]
+    outputerino={}
     for var in range(1,8):
         coin=datetime.date.today()+datetime.timedelta(var)
         mdotww=coin.isoformat()
@@ -89,6 +91,9 @@ def main():
 
         if not events[var-1]:
             print('No alarms to set on this day')
+            mpmn=24*60
+            outputerino[dotw]=mpmn
+            print(outputerino)
             print()
         for event in events[var-1]:
             start = event['start'].get('dateTime', event['start'].get('date'))
@@ -97,9 +102,15 @@ def main():
             minutee = start.split("T")[1].split("Z")[0].split(":")[1]
             seconde = start.split("T")[1].split("Z")[0].split(":")[2]
             alarmsetoutput=datetime.time(int(houre)-1, int(minutee), int(seconde),0) 
-            print("Alarm set on " + dotw + " for " + str(alarmsetoutput)) #The two things to take from this script are the dotw (day of the week) and the alarmsetoutput which hopefully should be enough information I can also return the date as well if need be
+            print("Alarm set on " + dotw + " for " + str(alarmsetoutput))
+            #The two things to take from this script are the dotw (day of the week) and the alarmsetoutput which hopefully should be enough information I can also return the date as well if need be
+            mpmn=(str((int(str(alarmsetoutput).split(":")[0])*60) + int(str(alarmsetoutput).split(":")[1])))
+            outputerino[dotw]= mpmn
+            print(outputerino)
             print()
 
+
+# As outputerino already a dictionary which is compatatble 
 
 if __name__ == '__main__':
     main()
@@ -108,3 +119,5 @@ if __name__ == '__main__':
 #Adjustable time so the user can enter how many hours before their first event that the alarm goes off
 #Adjustable hours for alarm to be set so that the user can determine what hours between the alarms can be set
 #robobrowser or selenium so I can log on to sussed and download the student timetable
+#return the times ordered by monday to friday with only the hour and minute seperated by colons and commas
+#be able to input 2 integers to determine how long before the first event that the alarm can go off
