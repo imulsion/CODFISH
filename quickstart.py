@@ -3,6 +3,7 @@ Things that have to be installed:
 Google Calendar API
 Requests
 Selenium IF the log on to sussed code works
+Chrome web driver
 '''
 
 from __future__ import print_function
@@ -73,6 +74,8 @@ def main():
     processweb=requests.get("webpage goes here")
     print(processweb.status_code)
     wcalendar=str(processweb.text[calendarselect])
+    if wcalendar==None:
+        wcalendar='primary'
     # now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     # print('Getting the upcoming 15 events')
     # maximum=datetime.datetime(2018, 2, 21, 21, 00, 00, 000000).isoformat() + 'Z'
@@ -80,9 +83,9 @@ def main():
     events=[]
     output={}
     for var in range(1,8):
-        coin=datetime.date.today()+datetime.timedelta(var)
-        mdotww=coin.isoformat()
-        dotw=datetime.datetime.strptime(mdotww,"%Y-%m-%d").strftime("%A") #This gives the day of the week relative to the current day
+        a=datetime.date.today()+datetime.timedelta(var)
+        mdotww=a.isoformat()
+        dotw=datetime.datetime.strptime(mdotww,"%Y-%m-%d").strftime("%A") #This gives the next of occurance of a particular DOTW
         print(dotw + " " + mdotww.split("-",)[2] + " " + mdotww.split("-",)[1] + " " + mdotww.split("-",)[0]) #This will print the date as well as the dotw
         now=mdotww + "T06:00:00Z"
         maximum=mdotww + "T13:00:00Z"
@@ -102,6 +105,7 @@ def main():
                 # print(eventsResult)
             events.append(eventsResult.get('items', []))
         except:
+            print("Your calendar could not be found")
             pass
         if not events[var-1]:
             print('No alarms to set on this day')

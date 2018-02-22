@@ -8,6 +8,7 @@ from time import sleep
 import datetime
 from csv import reader
 import pickle
+import requests
 
 driver = webdriver.Chrome()
 
@@ -21,13 +22,32 @@ lines = []
 #         lines.append({h:v for h,v in zip(heads,line)})
 
 # Load selenium
+semcheck=datetime.date.today()
 driver.get("https://timetable.soton.ac.uk/Home/Semester/2/")
 
 # Wait for the page to load
 element = WebDriverWait(driver, 10).until(
          # Wait until a button is on the screen
-         EC.presence_of_element_located((By.ID, "newItem"))
+        EC.presence_of_element_located((By.ID, "userNameInput"))
 )
+
+#Look for id userNameInput
+#Fill in user name
+inputUsername = driver.find_element_by_id("userNameInput")
+inputUsername.send_keys("rrm1g16") 
+
+#Look for id passwordInput
+#Fill in password
+inputPassword = driver.find_element_by_id("passwordInput")
+inputPassword.send_keys("ThisIsNotMyPassword")
+#Press id submitButton
+driver.find_element_by_id("submitButton").click()
+
+element = WebDriverWait(driver, 10).until(
+    #Waits for the calendar to actually load
+    EC.presence_of_element_located(By.ID, "calendar")
+)
+
 # for row in lines:
 #     sleep(1)
 #     # Click 'new' then wait for the form to appear
@@ -68,8 +88,5 @@ element = WebDriverWait(driver, 10).until(
 #             # Wait for the form to be gone
 #             EC.invisibility_of_element_located((By.ID, "Quantity"))
 #     )
-sleep(1)
-
-# And we're done!
 print("Done!")
 driver.quit()
