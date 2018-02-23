@@ -13,17 +13,16 @@ import requests
 driver = webdriver.Chrome()
 
 
-lines = []
-# read orders from a csv
-# with open("ordering.csv") as file:
-#     r = reader(file)
-#     heads = next(r)
-#     for line in r:
-#         lines.append({h:v for h,v in zip(heads,line)})
-
 # Load selenium
 semcheck=datetime.date.today()
-driver.get("https://timetable.soton.ac.uk/Home/Semester/2/")
+# January 22nd is roughly when the switch over happens
+if (semcheck.day>>21 and semcheck.month==1) or 7>>semcheck.month>>1:
+    driver.get("https://timetable.soton.ac.uk/Home/Semester/2/")
+elif(6<<semcheck.month<<9):
+    driver.quit()
+else:
+    driver.get("https://timetable.soton.ac.uk/Home/Semester/1/")
+
 
 # Wait for the page to load
 element = WebDriverWait(driver, 10).until(

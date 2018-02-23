@@ -68,18 +68,13 @@ def main():
 
     '''What I want to recieve:
     Name of calendar
-    Hours before
-    Minutes before
     '''
-    processweb=requests.get("webpage goes here")
+    processweb=requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php")
     print(processweb.status_code)
-    wcalendar=str(processweb.text[calendarselect])
+    wcalendar=str(processweb.text["calendarselect"])
     if wcalendar==None:
         wcalendar='primary'
-    # now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-    # print('Getting the upcoming 15 events')
-    # maximum=datetime.datetime(2018, 2, 21, 21, 00, 00, 000000).isoformat() + 'Z'
-    # print(maximum)
+
     events=[]
     output={}
     for var in range(1,8):
@@ -89,9 +84,6 @@ def main():
         print(dotw + " " + mdotww.split("-",)[2] + " " + mdotww.split("-",)[1] + " " + mdotww.split("-",)[0]) #This will print the date as well as the dotw
         now=mdotww + "T06:00:00Z"
         maximum=mdotww + "T13:00:00Z"
-        # print(now)
-        # print(maximum)
-        # print(var)
         
         try:
             eventsResult = service.events().list(
@@ -126,7 +118,7 @@ def main():
             output[dotw]= mpmn
             print(output)
             print()
-    testout=requests.post("web page goes here",data=output)
+    testout=requests.post("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php",data=output)
 # As output is already a dictionary which is compatatble with JSON
 
 if __name__ == '__main__':
