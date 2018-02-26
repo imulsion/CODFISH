@@ -1,13 +1,8 @@
-<!--
-TODO:  finish signup
--->	  
-
-
 <?php
 	 session_start();
 	 if(isset($_SESSION["UserID"]))
 	 {
-	 	echo("<script type = 'text/javascript'>window.location.replace('index.php?logtype=3');</script>");
+	 	echo("<script type = 'text/javascript'>window.location.replace('index.php?logtype=2');</script>");
 	 	die();
 	 }
 ?>
@@ -35,6 +30,20 @@ TODO:  finish signup
 		$username = mysqli_real_escape_string($conn,$_POST["signup_Username"]);
 		$password = mysqli_real_escape_string($conn,$_POST["signup_Password"]);
 		$email = mysqli_real_escape_string($conn,$_POST["email"]);
+		$sqlcheck = "SELECT * FROM `users` WHERE UserID='$username'";
+		$result = mysqli_query($conn,$sqlcheck) or die(mysqli_error($conn));
+		if(mysqli_num_rows($result)>0)
+		{
+			echo("<script type = 'text/javascript'>window.location.replace('index.php?serror=0');</script>");
+			die();
+		}
+		$sqlcheck = "SELECT * FROM `users` WHERE email='$email'";
+		$result = mysqli_query($conn,$sqlcheck) or die(mysqli_error($conn));
+		if(mysqli_num_rows($result)>0)
+		{
+			echo("<script type = 'text/javascript'>window.location.replace('index.php?serror=1');</script>");
+			die();
+		} 
 		$defaulttime = 60*$_POST["hour"]+$_POST["min"];
 		$sql = "INSERT INTO users(UserID,Pass,email,default_time) VALUES ('$username','$password','$email','$defaulttime')";
 		$result = mysqli_query($conn,$sql) or die(mysqli_error($conn));

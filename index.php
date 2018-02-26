@@ -1,4 +1,11 @@
-<?php session_start(); ?>
+<?php
+	session_start(); 
+	if($_SERVER["HTTPS"]!="on")
+	{
+		header("Location: https://".$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"]);
+		die();
+	}
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,7 +15,10 @@ function validate(x)
 {
 	if(x)
 	{
-		passCheck();
+		if(!passCheck())
+		{
+			return false;
+		}
 		if( (document.forms["signup"]["signup_Username"].value==="")||(document.forms["signup"]["email"].value==="") )
 		{
 			document.getElementById("error").innerHTML = "Error: One or more required fields is empty";
@@ -47,7 +57,43 @@ function passCheck()
 </script>
 </head>
 <body>
-<table style = "width:100%"><tr><td width = "33%"><?php if(isset($_GET["logtype"])){echo("<p style = 'color:red'>");if($_GET["logtype"]==1){echo("Login successful</p>");}else if($_GET["logtype"]==0){echo("Login failed: Your username or password was incorrect.</p>");}else if($_GET["logtype"]==1){echo("You have been successfully logged out");}else{echo("Error: You are already signed in to an account");}}?></td><td width = "33%">
+<table style = "width:100%"><tr><td width = "33%">
+<?php 
+	if(isset($_GET["logtype"])&&!isset($_GET["serror"]))
+	{
+		echo("<p style = 'color:red'>");
+		if($_GET["logtype"]==1)
+		{
+			echo("Login successful</p>");
+		}	
+		else if($_GET["logtype"]==0)
+		{	
+			echo("Login failed: Your username or password was incorrect.</p>");
+		}
+		else if($_GET["logtype"]==2)
+		{
+			echo("Error: You are already signed in to an account.</p>");
+		}
+		else
+		{
+			echo("You have been successfully logged out</p>");
+		}
+	}
+	else if(!isset($_GET["logtype"])&&isset($_GET["serror"]))
+	{
+		echo("<p style = 'color:#FF0000'>");
+		if($_GET["serror"]==0)
+		{
+			echo("Error: This username has already been taken by another user.</p>");
+		}
+		else
+		{
+			echo("Error: This email address is already registered in this website.</p>");
+		}
+	}
+	else{}
+?>
+</td><td width = "33%">
 <h1 align="center">Welcome to SAC. Log in or Sign up to continue</h1></td>
 <td width = "33%"><p align="right"><?php if(isset($_SESSION["UserID"])){echo("Welcome <a href = 'user_acc.php'>".$_SESSION["UserID"]."</a></p><a style='float:right' href = 'logout.php'>Logout</a>");}?></td></tr></table>
 

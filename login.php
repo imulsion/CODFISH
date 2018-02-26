@@ -1,5 +1,10 @@
 <?php 
 	session_start();
+	if(isset($_SESSION["UserID"]))
+	{
+		echo("<script type = 'text/javascript'>window.location.replace('index.php?logtype=2');</script>");
+		die();
+	}
 	$conn = mysqli_connect("localhost","sk6g16","CODFISH","ug_sk6g16");
 	if(!$conn)
 	{
@@ -7,8 +12,8 @@
 	}
 	else
 	{
-		$username = $_POST["login_Username"];
-		$password = $_POST["login_Password"];
+		$username = mysqli_real_escape_string($conn,$_POST["login_Username"]);
+		$password = mysqli_real_escape_string($conn,$_POST["login_Password"]);
 		$sql = "SELECT * FROM `users` WHERE UserID='$username' AND Pass='$password'";
 		$result = mysqli_query($conn,$sql) or die(mysqli_error($conn));
 		if(mysqli_num_rows($result)==0)

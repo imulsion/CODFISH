@@ -1,68 +1,69 @@
 body {
-  background-color: rgb(214, 214, 194);
+	background-color: rgb(214, 214, 194);
 }
-
+  
 legend {
-  font-family: "Courier";
-  font-weight: bold;
-  font-size: 30px;
-  margin: 0px auto;
+	font-family: "Courier";
+    font-weight: bold;
+    font-size: 30px;
+    margin: 0px auto;
 }
-
+          
 fieldset {
-  width: 600px;
-  margin: 0px auto;
+	width: 600px;
+    margin: 0px auto;
 }
-
+              
 #userInfo {
-  display: table;
-  margin: 0px auto;
-  /*border: 1px dashed red;*/
-  margin-bottom: 20px;
+    display: table;
+    margin: 0px auto;
+    /*border: 1px dashed red;*/
+	margin-bottom: 20px;
 }
-
+                      
 #alarmTimes {
-  display: table;
-  margin: 0px auto;
-  /*border: 1px dashed red;*/
-  margin-top: 20px;
+    display: table;
+    margin: 0px auto;
+    /*border: 1px dashed red;*/
+	margin-top: 20px;
 }
-
+                              
 .textInput {
-  width: 160px;
+	width: 160px;
 }
-
+                                
 .days {
-  font-size: 18px;
-  display: block;
-  /*border: 1px dashed magenta;*/
-  height: 40px;
+    font-size: 18px;
+    display: block;
+    /*border: 1px dashed magenta;*/
+	height: 40px;
 }
-
+                                        
 #daysBox {
-  display: inline-block;
-  /*border: 1px dotted green;*/
-  float: left;
-  margin-right: 10px;
+    display: inline-block;
+    /*border: 1px dotted green;*/
+    float: left;
+	margin-right: 10px;
 }
-
+                                                
 #timesBox {
-  display: inline-block;
-  /*border: 1px dashed red;*/
-  float: left;
+    display: inline-block;
+    /*border: 1px dashed red;*/
+	float: left;
 }
-
+                                                      
 .timesInner {
-  display: block;
-  padding-bottom: 0px;
-  /*border: 1px dashed black;*/
-  height: 40px;
+    display: block;
+    padding-bottom: 0px;
+    /*border: 1px dashed black;*/
+	height: 40px;
 }  
-
+                                                              
 .button, .buttonChange {
-  cursor: pointer;
+	cursor: pointer;
 }
-
+              
 .buttonChange {
-  margin-left: 10px;
+	margin-left: 10px;
 }
+                                                                  

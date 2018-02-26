@@ -3,5 +3,5 @@
 	session_unset();
 	session_destroy();
 	$_SESSION = array();
-	echo("<script type = 'text/javascript'>window.location.replace('index.php?logtype=2')</script>");
+	echo("<script type = 'text/javascript'>window.location.replace('index.php?logtype=3')</script>");
 ?>
