@@ -4,6 +4,7 @@ Google Calendar API
 Requests
 Selenium IF the log on to sussed code works
 Chrome web driver
+lmxl
 '''
 
 from __future__ import print_function
@@ -68,13 +69,14 @@ def main():
 
     '''What I want to recieve:
     Name of calendar
+    Whether it is nightmode or day mode
     '''
     processweb=requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php")
     print(processweb.status_code)
-    wcalendar=str(processweb.text["calendarselect"])
-    if wcalendar==None:
+    print(processweb.text)
+    wcalendar=processweb.text
+    if 0==len(wcalendar):
         wcalendar='primary'
-
     events=[]
     output={}
     for var in range(1,8):
@@ -82,12 +84,12 @@ def main():
         mdotww=a.isoformat()
         dotw=datetime.datetime.strptime(mdotww,"%Y-%m-%d").strftime("%A") #This gives the next of occurance of a particular DOTW
         print(dotw + " " + mdotww.split("-",)[2] + " " + mdotww.split("-",)[1] + " " + mdotww.split("-",)[0]) #This will print the date as well as the dotw
-        now=mdotww + "T06:00:00Z"
-        maximum=mdotww + "T13:00:00Z"
+        now=mdotww + "T05:00:00Z"
+        maximum=mdotww + "T14:00:00Z"
         
         try:
             eventsResult = service.events().list(
-                calendarId='wcalendar',
+                calendarId=wcalendar,
                 timeMin=now,
                 timeMax=maximum,
                 maxResults=1,
@@ -96,28 +98,28 @@ def main():
                 # print(type(eventsResult))
                 # print(eventsResult)
             events.append(eventsResult.get('items', []))
+            if not events[var-1]:
+                print('No alarms to set on this day')
+                mpmn=1440
+                output[dotw]=mpmn
+                print(output)
+                print()
+            for event in events[var-1]:
+                start = event['start'].get('dateTime', event['start'].get('date'))
+                # print(start, event['summary'])
+                houre = start.split("T")[1].split("Z")[0].split(":")[0]
+                minutee = start.split("T")[1].split("Z")[0].split(":")[1]
+                seconde = start.split("T")[1].split("Z")[0].split(":")[2]
+                alarmsetoutput=datetime.time(int(houre), int(minutee), int(seconde),0) 
+                print("Alarm set on " + dotw + " for " + str(alarmsetoutput))
+                #The two things to take from this script are the dotw (day of the week) and the alarmsetoutput which hopefully should be enough information I can also return the date as well if need be
+                mpmn=(str((int(str(alarmsetoutput).split(":")[0])*60) + int(str(alarmsetoutput).split(":")[1])))
+                output[dotw]= mpmn
+                print(output)
+                print()
         except:
             print("Your calendar could not be found")
-            pass
-        if not events[var-1]:
-            print('No alarms to set on this day')
-            mpmn=24*60
-            output[dotw]=mpmn
-            print(output)
-            print()
-        for event in events[var-1]:
-            start = event['start'].get('dateTime', event['start'].get('date'))
-            # print(start, event['summary'])
-            houre = start.split("T")[1].split("Z")[0].split(":")[0]
-            minutee = start.split("T")[1].split("Z")[0].split(":")[1]
-            seconde = start.split("T")[1].split("Z")[0].split(":")[2]
-            alarmsetoutput=datetime.time(int(houre), int(minutee), int(seconde),0) 
-            print("Alarm set on " + dotw + " for " + str(alarmsetoutput))
-            #The two things to take from this script are the dotw (day of the week) and the alarmsetoutput which hopefully should be enough information I can also return the date as well if need be
-            mpmn=(str((int(str(alarmsetoutput).split(":")[0])*60) + int(str(alarmsetoutput).split(":")[1])))
-            output[dotw]= mpmn
-            print(output)
-            print()
+            output[dotw]=1440
     testout=requests.post("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php",data=output)
 # As output is already a dictionary which is compatatble with JSON
 

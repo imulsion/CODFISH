@@ -9,17 +9,28 @@ import datetime
 from csv import reader
 import pickle
 import requests
+import sys
+import timetable_converter
 
 driver = webdriver.Chrome()
 
-
+output={}
 # Load selenium
 semcheck=datetime.date.today()
 # January 22nd is roughly when the switch over happens
-if (semcheck.day>>21 and semcheck.month==1) or 7>>semcheck.month>>1:
+if (int(semcheck.day)>21 and int(semcheck.month)==1) or 7>int(semcheck.month)>1:
     driver.get("https://timetable.soton.ac.uk/Home/Semester/2/")
-elif(6<<semcheck.month<<9):
+elif(6<int(semcheck.month)<9):
     driver.quit()
+    print("It's the summer you don't need a timetable")
+    for var in range(1,8):
+        a=datetime.date.today()+datetime.timedelta(var)
+        mdotww=a.isoformat()
+        dotw=datetime.datetime.strptime(mdotww,"%Y-%m-%d").strftime("%A")
+        output[dotw]=1440
+    testpy=requests.post("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php",data=output)
+    print(type(testpy))
+    sys.exit()
 else:
     driver.get("https://timetable.soton.ac.uk/Home/Semester/1/")
 
@@ -32,60 +43,34 @@ element = WebDriverWait(driver, 10).until(
 
 #Look for id userNameInput
 #Fill in user name
+with open("notongit.txt",'r') as file:
+    alllines=file.readlines()
+    username=alllines[0]
+    password=alllines[1]
+
 inputUsername = driver.find_element_by_id("userNameInput")
-inputUsername.send_keys("rrm1g16") 
+inputUsername.send_keys(username) 
+
+sleep(0.5)
 
 #Look for id passwordInput
 #Fill in password
 inputPassword = driver.find_element_by_id("passwordInput")
-inputPassword.send_keys("ThisIsNotMyPassword")
+inputPassword.send_keys(password)
 #Press id submitButton
 driver.find_element_by_id("submitButton").click()
 
 element = WebDriverWait(driver, 10).until(
     #Waits for the calendar to actually load
-    EC.presence_of_element_located(By.ID, "calendar")
+    EC.presence_of_element_located((By.ID, "calendar"))
 )
 
-# for row in lines:
-#     sleep(1)
-#     # Click 'new' then wait for the form to appear
-#     driver.find_element_by_id('newItem').click()
-#     element = WebDriverWait(driver, 120).until(
-#             EC.presence_of_element_located((By.ID, "Quantity"))
-#     )
-#     sleep(3)
-#     # Fill out all the values in the form
-#     quant = driver.find_element_by_id('Quantity')
-#     quant.clear() # remove autofilled text
-#     quant.send_keys(row['Quantity'])
-#     sleep(3)
+elem = driver.find_element_by_xpath("//*")
+source_code = elem.get_attribute("outerHTML")
+with open('My Timetable.html','w') as f:
+    f.write(source_code)
 
-#     driver.find_element_by_id('Stockcode').send_keys(row['Code']+'\t')
-#     sleep(1)
+timetable_converter.main()
 
-#     driver.find_element_by_id('Description1').send_keys(row['Link']+'\t')
-    
-#     driver.find_element_by_id('PRODUCT_CODE').send_keys('M1017'+Keys.RETURN+'\t')
-
-#     account_code = driver.find_element_by_id('Account_Code')
-#     account_code.clear() # remove autofilled text
-#     account_code.send_keys('501345101'+'\t')
-
-#     price = driver.find_element_by_id('UnitPrice')
-#     price.clear()
-#     price.send_keys(row['Per Item'][1:]+'\t')
-
-#     driver.find_element_by_id('SpecialItemInstructions').send_keys('The item is for GDP team 2\t')
-
-#     driver.find_element_by_id('LOCATION').send_keys('16/1001\t')
-#     sleep(1)
-
-#     # Use xpath to find this element because it doesn't have a nice ID
-#     driver.find_element_by_xpath('/html/body/div[2]/div[11]/div/button[1]').click()
-#     element = WebDriverWait(driver, 120).until(
-#             # Wait for the form to be gone
-#             EC.invisibility_of_element_located((By.ID, "Quantity"))
-#     )
 print("Done!")
-driver.quit()
+#driver.quit()
