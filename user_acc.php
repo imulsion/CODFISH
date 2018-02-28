@@ -15,6 +15,7 @@
 		$sql = "SELECT * FROM `users` WHERE UserID='{$_SESSION["UserID"]}'";
 		$result = mysqli_query($conn,$sql) or die(mysqli_error($conn));
 		$INFO = mysqli_fetch_assoc($result);
+		
 	}
 	function printTimes($type,$day,$DATA)
 	{
@@ -82,6 +83,27 @@
 <title>Account settings</title>
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="webInterface.css">
+<script type = 'text/javascript'>
+function reveal(x)
+{
+	if(x)
+	{
+		document.getElementById("email").style.visibility="visible";
+		document.getElementById("email_button").style.visibility="visible";
+	}
+	else
+	{
+		document.getElementById("username").style.visibility="visible";
+		document.getElementById("username_button").style.visibility="visible";
+	}
+}
+function toggleDisabled(x,classname)
+{
+	var dropdowns = document.getElementsByClassName(classname);
+	dropdowns[0].disabled= x?true:false;
+	dropdowns[1].disabled= x?true:false;
+}
+</script>
 </head>
 <body>
 <table style = "width:100%"><tr>
@@ -101,13 +123,36 @@
 <fieldset>
 <legend>User Info</legend>
 <div id = "userInfo">
+<table>
+<tr>
+<td>
 <p>Username: <?php echo($_SESSION["UserID"]);?></p>
-<input class = "textInput" type = "text" name= "email">
-<input class = "buttonChange" type = "submit" value = "Change">
-<br />
+</td>
+<td>
+<a onclick="reveal(0)" href="#">Change</a>
+</td>
+</tr>
+<tr>
+<td>
+<input id="username" class = "textInput" type = "text" name= "username" style="visibility:hidden">
+<input id = "username_button" class = "buttonChange" type = "submit" value = "Update" style = "visibility:hidden">
+</td>
+</tr>
+<tr>
+<td>
 <p>Email: <?php echo($INFO["email"]);?></p>
-<input class = "textInput" type = "text" name = "email">
-<input class = "buttonChange" type = "submit" value = "Change">
+</td>
+<td>
+<a onclick="reveal(1)" href="#">Change</a>
+</td>
+</tr>
+<tr>
+<td>
+<input id = "email" class = "textInput" type = "text" name = "email" style="visibility:hidden">
+<input id="email_button" class = "buttonChange" type = "submit" value = "Update" style="visibility:hidden">
+</td>
+</tr>
+</table>
 </div>
 </fieldset>
 </form>
@@ -127,32 +172,46 @@
 </div>
 <div id = "timesBox">
 <div class = "timesInner">
-<select name = "mondayHours"><?php	printTimes(0,"Monday_user",$INFO);?></select>:
-<select name = "mondayMinutes"><?php printTimes(1,"Monday_user",$INFO);?></select>
+<select class = "googleMonday" name = "mondayHours" <?php if($INFO["Monday_calendar"]!=1440){echo("disabled");}?>><?php	printTimes(0,"Monday_user",$INFO);?></select>:
+<select class = "googleMonday" name = "mondayMinutes" <?php if($INFO["Monday_calendar"]!=1440){echo("disabled");}?>><?php printTimes(1,"Monday_user",$INFO);?></select>
+<label for="googleMonday">Sync with Google calendar</label>
+<input type = "checkbox" onchange="toggleDisabled(this.checked,'googleMonday')" name="googleMonday" <?php if($INFO["Monday_calendar"]!=1440){echo("checked");}?>>
 </div>
 <div class = "timesInner">
-<select name = "tuesdayHours"><?php printTimes(0,"Tuesday_user",$INFO);?></select>:
-<select name = "tuesdayMinutes"><?php printTimes(1,"Tuesday_user",$INFO);?></select>
+<select class = "googleTuesday" name = "tuesdayHours" <?php if($INFO["Tuesday_calendar"]!=1440){echo("disabled");}?>><?php printTimes(0,"Tuesday_user",$INFO);?></select>:
+<select class = "googleTuesday" name = "tuesdayMinutes" <?php if($INFO["Tuesday_calendar"]!=1440){echo("disabled");}?>><?php printTimes(1,"Tuesday_user",$INFO);?></select>
+<label for="googleTuesday">Sync with Google calendar</label>
+<input type = "checkbox" onchange="toggleDisabled(this.checked,'googleTuesday')" name="googleTuesday" <?php if($INFO["Tuesday_calendar"]!=1440){echo("checked");}?>>
 </div>
 <div class = "timesInner">
-<select name = "wednesdayHours"><?php printTimes(0,"Wednesday_user",$INFO);?></select>:
-<select name = "wednesdayMinutes"><?php printTimes(1,"Wednesday_user",$INFO);?></select>
+<select class = "googleWednesday" name = "wednesdayHours" <?php if($INFO["Wednesday_calendar"]!=1440){echo("disabled");}?>><?php printTimes(0,"Wednesday_user",$INFO);?></select>:
+<select class = "googleWednesday" name = "wednesdayMinutes" <?php if($INFO["Wednesday_calendar"]!=1440){echo("disabled");}?>><?php printTimes(1,"Wednesday_user",$INFO);?></select>
+<label for="googleWednesday">Sync with Google calendar</label>
+<input type = "checkbox" onchange="toggleDisabled(this.checked,'googleWednesday')" name="googleWednesday" <?php if($INFO["Wednesday_calendar"]!=1440){echo("checked");}?>>
 </div>
 <div class = "timesInner">
-<select name = "thursdayHours"><?php printTimes(0,"Thursday_user",$INFO);?></select>:
-<select name = "thursdayMinutes"><?php printTimes(1,"Thursday_user",$INFO);?></select>
+<select class = "googleThursday" name = "thursdayHours" <?php if($INFO["Thursday_calendar"]!=1440){echo("disabled");}?>><?php printTimes(0,"Thursday_user",$INFO);?></select>:
+<select class = "googleThursday" name = "thursdayMinutes" <?php if($INFO["Thursday_calendar"]!=1440){echo("disabled");}?>><?php printTimes(1,"Thursday_user",$INFO);?></select>
+<label for="googleThursday">Sync with Google calendar</label>
+<input type = "checkbox" onchange="toggleDisabled(this.checked,'googleThursday')" name="googleThursday" <?php if($INFO["Thursday_calendar"]!=1440){echo("checked");}?>>
 </div>
 <div class = "timesInner">
-<select name = "fridayHours"><?php printTimes(0,"Friday_user",$INFO);?></select>:
-<select name = "fridayMinutes"><?php printTimes(1,"Friday_user",$INFO);?></select>
+<select class = "googleFriday" name = "fridayHours" <?php if($INFO["Friday_calendar"]!=1440){echo("disabled");}?>><?php printTimes(0,"Friday_user",$INFO);?></select>:
+<select class = "googleFriday" name = "fridayMinutes" <?php if($INFO["Friday_calendar"]!=1440){echo("disabled");}?>><?php printTimes(1,"Friday_user",$INFO);?></select>
+<label for="googleFriday">Sync with Google calendar</label>
+<input type = "checkbox" onchange="toggleDisabled(this.checked,'googleFriday')" name="googleFriday" <?php if($INFO["Friday_calendar"]!=1440){echo("checked");}?>>
 </div>
 <div class = "timesInner">
-<select name = "saturdayHours"><?php printTimes(0,"Saturday_user",$INFO);?></select>:
-<select name = "saturdayMinutes"><?php printTimes(1,"Saturday_user",$INFO);?></select>
+<select class = "googleSaturday" name = "saturdayHours" <?php if($INFO["Saturday_calendar"]!=1440){echo("disabled");}?>><?php printTimes(0,"Saturday_user",$INFO);?></select>:
+<select class = "googleSaturday" name = "saturdayMinutes" <?php if($INFO["Saturday_calendar"]!=1440){echo("disabled");}?>><?php printTimes(1,"Saturday_user",$INFO);?></select>
+<label for="googleSaturday">Sync with Google calendar</label>
+<input type = "checkbox" onchange="toggleDisabled(this.checked,'googleSaturday')" name="googleSaturday" <?php if($INFO["Saturday_calendar"]!=1440){echo("checked");}?>>
 </div>
 <div class = "timesInner">
-<select name = "sundayHours"><?php printTimes(0,"Sunday_user",$INFO);?></select>:
-<select name = "sundayMinutes"><?php printTimes(1,"Sunday_user",$INFO);?></select>
+<select class = "googleSunday" name = "sundayHours" <?php if($INFO["Sunday_calendar"]!=1440){echo("disabled");}?>><?php printTimes(0,"Sunday_user",$INFO);?></select>:
+<select class = "googleSunday" name = "sundayMinutes" <?php if($INFO["Sunday_calendar"]!=1440){echo("disabled");}?>><?php printTimes(1,"Sunday_user",$INFO);?></select>
+<label for="googleSunday">Sync with Google calendar</label>
+<input type = "checkbox" onchange="toggleDisabled(this.checked,'googleSunday')" name="googleSunday" <?php if($INFO["Sunday_calendar"]!=1440){echo("checked");}?>>
 </div>
 <input class = "button" type = "submit" value = "Update times">
 <p style = "color:red"><?php

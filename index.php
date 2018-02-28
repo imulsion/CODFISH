@@ -56,7 +56,7 @@ function passCheck()
 }
 </script>
 </head>
-<body>
+<body style = "background-color:#D6D6C2">
 <table style = "width:100%"><tr><td width = "33%">
 <?php 
 	if(isset($_GET["logtype"])&&!isset($_GET["serror"]))

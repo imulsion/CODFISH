@@ -25,7 +25,7 @@
 		{
 			$values = mysqli_fetch_assoc($result);
 			$_SESSION["UserID"]=$values["UserID"];
-			echo("<script type = 'text/javascript'>window.location.replace('index.php?logtype=1');</script>");
+			echo("<script type = 'text/javascript'>window.location.replace('user_acc.php');</script>");
 		}
 	}
 ?>
