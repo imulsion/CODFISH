@@ -11,12 +11,9 @@ import pickle
 import requests
 import sys
 import timetable_converter
-from apiclient import discovery
-from oauth2client import client
-from oauth2client import tools
-from oauth2client.file import Storage
+import /home/sk6g16/linuxproj_html/gcapi
 import os
-import httplib2
+import /home/sk6g16/linuxproj_html/plibrary
 
 def main():
 

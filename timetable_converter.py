@@ -5,11 +5,8 @@ import uuid
 import time
 import os
 import json
-from apiclient import discovery
-from oauth2client import client
-from oauth2client import tools
-from oauth2client.file import Storage
-import httplib2
+import /home/sk6g16/linuxproj_html/gcapi
+import /home/sk6g16/linuxproj_html/plibrary
 import requests
 
 import time

@@ -2,21 +2,18 @@
 Things that have to be installed:
 Google Calendar API
 Requests
-Selenium IF the log on to sussed code works
+Selenium
 Chrome web driver
 lmxl
 '''
 
 from __future__ import print_function
-import httplib2
+import /home/sk6g16/linuxproj_html/plibrary
 import os
 import json
 import requests
 
-from apiclient import discovery
-from oauth2client import client
-from oauth2client import tools
-from oauth2client.file import Storage
+import /home/sk6g16/linuxproj_html/gcapi
 
 from time import strftime
 import datetime
@@ -124,9 +121,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-'''Features to add:
-Adjustable hours for alarm to be set so that the user can determine what hours between the alarms can be set
-selenium so I can log on to sussed and download the student timetable
-JSON won't work because isolutions suck therefore use POST and urllib
-'''
