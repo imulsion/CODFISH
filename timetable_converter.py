@@ -14,7 +14,7 @@ import requests
 
 import time
 import datetime as dt
-from datetime import datetime
+from datetime import datetime, timedelta
 
 try:
     input = raw_input  # for Python 2 compatibility
@@ -322,6 +322,7 @@ def main():
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('calendar', 'v3', http=http)
     page_token=None
+    calendar_list = service.calendarList().list(pageToken=page_token).execute()
     for calendar_list_entry in calendar_list['items']:
         if calendar_list_entry['summary']=="Student Timetable":
             wcalendar=calendar_list_entry['id']
@@ -351,7 +352,7 @@ def main():
                         print(output)
                         print()
                     for event in events[var-1]:
-                        start = event['start'].get('dt', event['start'].get('date'))
+                        start = event['start'].get('dateTime', event['start'].get('date'))
                         houre = start.split("T")[1].split("Z")[0].split(":")[0]
                         minutee = start.split("T")[1].split("Z")[0].split(":")[1]
                         seconde = start.split("T")[1].split("Z")[0].split(":")[2]
@@ -365,8 +366,14 @@ def main():
                 except:
                     print("Your Timetable is empty")
                     output[dotw]=1440
+                    print(output)
+                    print()
             testout=requests.post("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php",data=output)
+            print(testout)
             print("Done!")
+            break
+        else:
+            page_token = calendar_list.get('nextPageToken')
 
 if __name__ == "__main__":
     main()
