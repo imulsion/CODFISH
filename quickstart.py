@@ -29,7 +29,7 @@ except ImportError:
 
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/calendar-python-quickstart.json
-SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
+SCOPES = 'https://www.googleapis.com/auth/calendar'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Google Calendar API Python Quickstart'
 
@@ -69,8 +69,9 @@ def main():
 
     '''What I want to recieve:
     Name of calendar
-    Whether it is nightmode or day mode
+    Additional feature: Whether it is nightmode or day mode
     '''
+    #testout=requests.post("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php","Hello")
     processweb=requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php")
     print(processweb.status_code)
     print(processweb.text)
@@ -95,8 +96,6 @@ def main():
                 maxResults=1,
                 singleEvents=True,
                 orderBy='startTime').execute()
-                # print(type(eventsResult))
-                # print(eventsResult)
             events.append(eventsResult.get('items', []))
             if not events[var-1]:
                 print('No alarms to set on this day')
@@ -106,7 +105,6 @@ def main():
                 print()
             for event in events[var-1]:
                 start = event['start'].get('dateTime', event['start'].get('date'))
-                # print(start, event['summary'])
                 houre = start.split("T")[1].split("Z")[0].split(":")[0]
                 minutee = start.split("T")[1].split("Z")[0].split(":")[1]
                 seconde = start.split("T")[1].split("Z")[0].split(":")[2]
@@ -121,6 +119,7 @@ def main():
             print("Your calendar could not be found")
             output[dotw]=1440
     testout=requests.post("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php",data=output)
+    print(testout.text)
 # As output is already a dictionary which is compatatble with JSON
 
 if __name__ == '__main__':
@@ -128,5 +127,6 @@ if __name__ == '__main__':
 
 '''Features to add:
 Adjustable hours for alarm to be set so that the user can determine what hours between the alarms can be set
-robobrowser or selenium so I can log on to sussed and download the student timetable
+selenium so I can log on to sussed and download the student timetable
+JSON won't work because isolutions suck therefore use POST and urllib
 '''

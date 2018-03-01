@@ -4,14 +4,33 @@ import unicodedata
 import uuid
 import time
 import os
+import json
+from apiclient import discovery
+from oauth2client import client
+from oauth2client import tools
+from oauth2client.file import Storage
+import httplib2
+import requests
 
-from datetime import datetime, timedelta
-
+import time
+import datetime as dt
+from datetime import datetime
 
 try:
     input = raw_input  # for Python 2 compatibility
 except NameError:
     pass
+
+try:
+    import argparse
+    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+except ImportError:
+    flags = None
+
+
+SCOPES = 'https://www.googleapis.com/auth/calendar'
+CLIENT_SECRET_FILE = 'client_secret.json'
+APPLICATION_NAME = 'Google Calendar API Python Quickstart'
 
 
 MONDAY_OF_FIRST_WEEK = "2017/10/02"  # YYYY/MM/DD
@@ -51,6 +70,33 @@ DAY_TO_ISO = {
     "Sat": "SA",
     "Sun": "SU",
 }
+def get_credentials():
+    """Gets valid user credentials from storage.
+    If nothing has been stored, or if the stored credentials are invalid,
+    the OAuth2 flow is completed to obtain the new credentials.
+
+    Returns:
+        Credentials, the obtained credential.
+    """
+    home_dir = os.path.expanduser('~')
+    credential_dir = os.path.join(home_dir, '.credentials')
+    if not os.path.exists(credential_dir):
+        os.makedirs(credential_dir)
+    credential_path = os.path.join(credential_dir,
+                                   'calendar-python-quickstart.json')
+
+    store = Storage(credential_path)
+    credentials = store.get()
+    if not credentials or credentials.invalid:
+        flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+        flow.user_agent = APPLICATION_NAME
+        if flags:
+            credentials = tools.run_flow(flow, store, flags)
+        else: # Needed only for compatibility with Python 2.6
+            credentials = tools.run(flow, store)
+        print('Storing credentials to ' + credential_path)
+    return credentials
+
 
 def get_term_weeks_from_string(week_string):
     weeks = []
@@ -114,11 +160,11 @@ def scrape_page(page_string):
             day_string,
             term_weeks[0]
             )
-        recursions = [start_and_end_datetime[0] + timedelta(weeks=week-term_weeks[0]) for week in term_weeks]
+        #recursions = [start_and_end_datetime[0] + timedelta(weeks=week-term_weeks[0]) for week in term_weeks]
         lecture["day"] = day_string
         lecture["start_time"] = start_and_end_datetime[0]
         lecture["end_time"] = start_and_end_datetime[1]
-        lecture["recursions"] = recursions
+        #lecture["recursions"] = recursions
         lecture["weeks"] = weeks
         lecture["week_times"] = weeks
         lecture["location"] = row[7].text.encode('utf-8').strip()
@@ -189,117 +235,59 @@ def get_datetime_of_lecture(
 
     return (start_time, end_time)
 
-# TODO: maybe make monday_of_first_week non-global
-# TODO(Bonus) link rooms to opendata by adding \
-#   ALTREF:http://data.southampton.ac.uk/room/<building-room>.html to the description
-
-
-def export_as_ical(lectures):
-    calendar_string = """BEGIN:VCALENDAR
-PRODID:-//github.com.Adimote//Timetable Converter v{version}//EN
-VERSION:2.0
-CALSCALE:GREGORIAN
-X-WR-CALNAME:timetable_University_of_Southampton
-X-WR-TIMEZONE:Europe/London
-BEGIN:VTIMEZONE
-TZID:Europe/London
-X-LIC-LOCATION:Europe/London
-BEGIN:DAYLIGHT
-TZOFFSETFROM:+0000
-TZOFFSETTO:+0100
-TZNAME:BST
-DTSTART:19700329T010000
-RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
-END:DAYLIGHT
-BEGIN:STANDARD
-TZOFFSETFROM:+0100
-TZOFFSETTO:+0000
-TZNAME:GMT
-DTSTART:19701025T020000
-RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
-END:STANDARD
-END:VTIMEZONE""".format(version=VERSION)
-    for lecture in lectures:
-        calendar_string += ("""
-BEGIN:VEVENT
-DTSTART;TZID=Europe/London:{start_time}
-DTEND;TZID=Europe/London:{end_time}{rdates}
-UID:{uid}
-DESCRIPTION:"""+DESCRIPTION_FORMAT+"""
-LOCATION:"""+LOCATION_FORMAT+"""
-SUMMARY:"""+TITLE_FORMAT+"""
-TRANSP:OPAQUE
-END:VEVENT
-""").format(
-        start_time=lecture["start_time"].strftime("%Y%m%dT%H%M%S"),
-        end_time=lecture["end_time"].strftime("%Y%m%dT%H%M%S"),
-        uid=uuid.uuid1(),
-        name=lecture["name"],
-        type=lecture["type"],
-        rdates="".join(["\nRDATE:{}".format(recursion.strftime("%Y%m%dT%H%M%S"))
-        for recursion in lecture["recursions"]
-        ]),
-        location=lecture["location"].replace(b"\n", b""),
-        code=lecture["code"],
-        week_count=len(lecture["weeks"]),
-        weeks=",".join([str(x) for x in lecture["weeks"]]),
-        day_string=day_to_iso_day(lecture["day"])
-    )
-    calendar_string += """
-END:VCALENDAR"""
-    return calendar_string
-
 
 def user_interface():
 
     url = "https://timetable.soton.ac.uk/Home/Semester/<semester_number>/ (1 or 2)"
     print("This code is configured for the year starting: {}".format(MONDAY_OF_FIRST_WEEK))
-    print("")
-    a = input("...is it the right year? (Yes/no) ")
-    if a.strip().lower() not in ("Yes","Y","yes","yee",""):
-        print("Go into the code and change the date to the FIRST monday of lectures!!")
-        return input("(Press Enter to close)")
-    print("")
-    print("...good.")
-    print("")
-    print("Now then:")
+
     while True:
-        print("")
-        print("----")
-        print("")
-        print("Please load the following up in your web browser: (log in if needed)")
-        print(url)
-        input("(Press Enter/Return to continue)")
-        print("")
-        print("Press ctrl/command + S and save it as 'My Timetable.html' in the same directory as this python script")
-        print("(Press Enter/Return when done)")
-        input()
         if os.path.isfile("My Timetable.html"):
             break
         else:
             print("...")
-            print("...I can't find the file!")
-            print("")
-            print("Lets try again")
-            print("")
-            print(
-                "Remember to save it in the same " +
-                "directory as this python script!"
-                )
 
     with open("My Timetable.html") as f:
+        #Scrapes the html to make it easier to deal with
         lectures = scrape_page(f.read())
-        with open("lecture_timetable.ics", "w") as cal_file:
-            cal_file.write(export_as_ical(lectures).replace(r'\n', '\r\n'))
-    print("...")
-    print("")
-    print("Done!")
-    print("")
-    print("The file 'lecture_timetable.ics' has now been created in the same directory.")
-    print("To import this into google calendar you just select the file from the import option in the settings menu.")
-    print("Good Luck!")
-    input("(Press Enter to close)")
-
+        for lecture in lectures:
+            start=lecture["start_time"].strftime("%Y-%m-%dT%H:%M:%SZ")
+            end=lecture["end_time"].strftime("%Y-%m-%dT%H:%M:%SZ")
+            name=lecture["name"]
+            #RDATES became too awkward to upload so I just replaced them with a rule until the end of the semster. This is a bad fix but Ill work on it if I have time
+            '''
+            rdates="".join(["RDATE:{} ".format(recursion.strftime("%Y-%m-%d-T%H:%M:%SZ"))
+            for recursion in lecture["recursions"]
+            ]),
+            '''
+            loc=str(lecture["location"].replace(b"\n", b""))
+            #Puts all the data in the event
+            event={
+                "summary": name,
+                "location": loc,
+                "start":{
+                    "dateTime":start,
+                    "timeZone":"Etc/GMT",
+                },
+                "end":{
+                    "dateTime":end,
+                    "timeZone":"Etc/GMT",
+                },
+                "recurrence":[
+                    "RRULE:FREQ=WEEKLY;UNTIL=20180520"
+                ],
+            }
+            json_event = json.loads(json.dumps(event))
+            credentials = get_credentials()
+            http = credentials.authorize(httplib2.Http())
+            service = discovery.build('calendar', 'v3', http=http)
+            #Uploads the event to the Student Timetable calendar
+            page_token=None
+            calendar_list = service.calendarList().list(pageToken=page_token).execute()
+            for calendar_list_entry in calendar_list['items']:
+                if calendar_list_entry['summary']=="Student Timetable":
+                    page_token = calendar_list.get('nextPageToken')
+                    event=service.events().insert(calendarId=calendar_list_entry["id"], body=json_event).execute()
 
 def test():
     with open("My Timetable.html") as f:
@@ -307,7 +295,78 @@ def test():
     print(export_as_ical(lectures))
 
 def main():
-    user_interface()
+        #Google Logon credentials
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('calendar', 'v3', http=http)
+    #Creates a new calendar for the timetable to go in unless it already exists
+    page_token=None
+    tag=0
+    calendar_list = service.calendarList().list(pageToken=page_token).execute()
+    for calendar_list_entry in calendar_list['items']:
+        print(calendar_list_entry['summary'])
+        if calendar_list_entry['summary']=="Student Timetable":
+            page_token = calendar_list.get('nextPageToken')
+            tag=1
+        else:
+            page_token = calendar_list.get('nextPageToken')
+
+    if tag==0:
+        print("New Student Timetable Created")
+        calendar={
+            'summary':'Student Timetable'
+        }
+        service.calendars().insert(body=calendar).execute()
+        user_interface()
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('calendar', 'v3', http=http)
+    page_token=None
+    for calendar_list_entry in calendar_list['items']:
+        if calendar_list_entry['summary']=="Student Timetable":
+            wcalendar=calendar_list_entry['id']
+            events=[]
+            output={}
+            for var in range(1,8):
+                a=dt.date.today()+dt.timedelta(var)
+                mdotww=a.isoformat()
+                dotw=dt.datetime.strptime(mdotww,"%Y-%m-%d").strftime("%A") #This gives the next of occurance of a particular DOTW
+                print(dotw + " " + mdotww.split("-",)[2] + " " + mdotww.split("-",)[1] + " " + mdotww.split("-",)[0]) #This will print the date as well as the dotw
+                now=mdotww + "T05:00:00Z"
+                maximum=mdotww + "T14:00:00Z"
+                
+                try:
+                    eventsResult = service.events().list(
+                        calendarId=wcalendar,
+                        timeMin=now,
+                        timeMax=maximum,
+                        maxResults=1,
+                        singleEvents=True,
+                        orderBy='startTime').execute()
+                    events.append(eventsResult.get('items', []))
+                    if not events[var-1]:
+                        print('No alarms to set on this day')
+                        mpmn=1440
+                        output[dotw]=mpmn
+                        print(output)
+                        print()
+                    for event in events[var-1]:
+                        start = event['start'].get('dt', event['start'].get('date'))
+                        houre = start.split("T")[1].split("Z")[0].split(":")[0]
+                        minutee = start.split("T")[1].split("Z")[0].split(":")[1]
+                        seconde = start.split("T")[1].split("Z")[0].split(":")[2]
+                        alarmsetoutput=dt.time(int(houre), int(minutee), int(seconde),0) 
+                        print("Alarm set on " + dotw + " for " + str(alarmsetoutput))
+                        #The two things to take from this script are the dotw (day of the week) and the alarmsetoutput which hopefully should be enough information I can also return the date as well if need be
+                        mpmn=(str((int(str(alarmsetoutput).split(":")[0])*60) + int(str(alarmsetoutput).split(":")[1])))
+                        output[dotw]= mpmn
+                        print(output)
+                        print()
+                except:
+                    print("Your Timetable is empty")
+                    output[dotw]=1440
+            testout=requests.post("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php",data=output)
+            print("Done!")
 
 if __name__ == "__main__":
     main()
