@@ -11,9 +11,12 @@ import pickle
 import requests
 import sys
 import timetable_converter
-import /home/sk6g16/linuxproj_html/gcapi
+from apiclient import discovery
+from oauth2client import client
+from oauth2client import tools
+from oauth2client.file import Storage
 import os
-import /home/sk6g16/linuxproj_html/plibrary
+import httplib2
 
 def main():
 
@@ -27,14 +30,13 @@ def main():
         driver.get("https://timetable.soton.ac.uk/Home/Semester/2/")
     elif(6<int(semcheck.month)<9):
         driver.quit()
-        print("It's the summer you don't need a timetable")
+        #print("It's the summer you don't need a timetable")
         for var in range(1,8):
             a=datetime.date.today()+datetime.timedelta(var)
             mdotww=a.isoformat()
             dotw=datetime.datetime.strptime(mdotww,"%Y-%m-%d").strftime("%A")
             output[dotw]=1440
-        testpy=requests.post("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php",data=output)
-        print(type(testpy))
+            resp = requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php?data="+str(output))
         sys.exit()
     else:
         driver.get("https://timetable.soton.ac.uk/Home/Semester/1/")
@@ -79,7 +81,7 @@ def main():
     driver.quit()
     timetable_converter.main() #Converts the downloaded sussed timetable into ics
 
-    print("Done!!")
+    #print("Done!!")
 if __name__ == '__main__':
     main()
 
