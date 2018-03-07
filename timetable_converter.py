@@ -342,8 +342,8 @@ def main():
                     if not events[var-1]:
                         #print('No alarms to set on this day')
                         mpmn=1440
-                        output[dotw]=str(mpmn)
-                        requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php?data="+dotw+str(output[dotw]))
+                        output[var]=str(mpmn)
+                        #requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php?data="+dotw+str(output[dotw]))
                         #print(output)
                         #print()
                     for event in events[var-1]:
@@ -355,17 +355,18 @@ def main():
                         #print("Alarm set on " + dotw + " for " + str(alarmsetoutput))
                         #The two things to take from this script are the dotw (day of the week) and the alarmsetoutput which hopefully should be enough information I can also return the date as well if need be
                         mpmn=(str((int(str(alarmsetoutput).split(":")[0])*60) + int(str(alarmsetoutput).split(":")[1])))
-                        output[dotw]= strmpmn
-                        requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php?data="+dotw+str(output[dotw]))
+                        output[var]= str(mpmn)
+                        #requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php?data="+dotw+str(output[dotw]))
                         #print(output)
                         #print()
                 except:
                     #print("Your Timetable is empty")
-                    output[dotw]=1440
-                    requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php?data="+dotw+str(output[dotw]))
+                    output[var]=1440
+                    #requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php?data="+dotw+str(output[dotw]))
                     #print(output)
                     #print()
             print(output)
+            requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php?data="+str(output['1'])+","+str(output['2'])+","+str(output['3'])+","+str(output['4'])+","+str(output['5'])+","+str(output['6'])+","+str(output['7']))
             #print("Done!")
             break
         else:

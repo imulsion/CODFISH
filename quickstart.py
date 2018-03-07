@@ -91,8 +91,8 @@ def send(wcalendar):
             if not events[var-1]:
                 #print('No alarms to set on this day')
                 mpmn=default
-                output[dotw]=mpmn
-                requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php?data="+dotw+str(output[dotw]))
+                output[var]=mpmn
+                #requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php?data="+dotw+str(output[dotw]))
                 #print(output)
                 #print()
             for event in events[var-1]:
@@ -104,15 +104,16 @@ def send(wcalendar):
                 #print("Alarm set on " + dotw + " for " + str(alarmsetoutput))
                 #The two things to take from this script are the dotw (day of the week) and the alarmsetoutput which hopefully should be enough information I can also return the date as well if need be
                 mpmn=(str((int(str(alarmsetoutput).split(":")[0])*60) + int(str(alarmsetoutput).split(":")[1])))
-                output[dotw]= mpmn
-                requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php?data="+dotw+str(output[dotw]))
+                output[var]= mpmn
+                #requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php?data="+dotw+str(output[dotw]))
                 #print(output)
                 #print()
         except:
             #print("Your calendar could not be found")
-            output[dotw]=default
-            requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php?data="+dotw+str(output[dotw]))
+            output[var]=default
+            #requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php?data="+dotw+str(output[dotw]))
     print(output)
+    requests.get("http://linuxproj.ecs.soton.ac.uk/~sk6g16/json_get.php?data="+str(output['1'])+","+str(output['2'])+","+str(output['3'])+","+str(output['4'])+","+str(output['5'])+","+str(output['6'])+","+str(output['7']))
 
 def main():
 
