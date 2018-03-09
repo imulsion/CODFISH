@@ -76,6 +76,37 @@
 			}
 		}
 	}
+	function printTimes2($type)
+	{
+		if(!$type)
+		{
+			for($i=0;$i<24;$i++)
+			{
+				if($i<10)
+				{
+					echo("<option value = '".$i."' selected>0".$i."</option>");
+				}
+				else
+				{
+					echo("<option value = '".$i."' selected>".$i."</option>");
+				}
+			}
+		}
+		else
+		{
+			for($j=0;$j<60;$j++)
+			{
+				if($j<10)
+				{
+					echo("<option value = '".$j."' selected>0".$j."</option>");
+				}
+				else
+				{
+					echo("<option value = '".$j."' selected>".$j."</option>");
+				}
+			}
+		}
+	}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -86,10 +117,21 @@
 <script type = 'text/javascript'>
 function reveal(x)
 {
-	if(x)
+	if(x==1)
 	{
 		document.getElementById("email").style.visibility="visible";
 		document.getElementById("email_button").style.visibility="visible";
+	}
+	else if(x==2)
+	{
+		document.getElementById("gcal").style.visibility="visible";
+		document.getElementById("gcal_button").style.visibility="visible";
+	}
+	else if(x==3)
+	{
+		document.getElementById("defaultHours").style.visibility="visible";
+		document.getElementById("defaultMins").style.visibility="visible";
+		document.getElementById("default_button").style.visibility="visible";
 	}
 	else
 	{
@@ -150,6 +192,36 @@ function toggleDisabled(x,classname)
 <td>
 <input id = "email" class = "textInput" type = "text" name = "email" style="visibility:hidden">
 <input id="email_button" class = "buttonChange" type = "submit" value = "Update" style="visibility:hidden">
+</td>
+</tr>
+<tr>
+<td>
+<p>Google calendar name: <?php echo(($INFO["GCAL_name"]!=0)?$INFO["GCAL_name"]:"Not set");?></p>
+</td>
+<td>
+<a onclick="reveal(2)" href="#">Change</a>
+</td>
+</tr>
+<tr>
+<td>
+<input id = "gcal" class = "textInput" type = "text" name = "gcal" style="visibility:hidden">
+<input id="gcal_button" class = "buttonChange" type = "submit" value = "Update" style="visibility:hidden">
+</td>
+</tr>
+<tr>
+<td>
+<!--TODO:Insert more change things here-->
+<p>Default alarm time: <?php echo($INFO["default_time"]) ?></p>
+</td>
+<td>
+<a onclick="reveal(3)" href="#">Change</a>
+</td>
+</tr>
+<tr>
+<td>
+<select id = "defaultHours" name = "defaultHours" style = "visibility:hidden"><?php printTimes2(0);?></select>
+<select id = "defaultMins" name = "defaultMins" style = "visibility:hidden"><?php printTimes2(1);?></select>
+<input id = "default_button" type = "submit" value = "Update" style = "visibility:hidden">
 </td>
 </tr>
 </table>

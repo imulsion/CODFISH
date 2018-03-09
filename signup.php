@@ -53,7 +53,7 @@
 		echo('document.getElementById("head").innerHTML="Welcome to SAC";');
 		echo('document.getElementById("details").innerHTML="You have successfully signed up to the SAC service.";');
 		echo('</script>');
-		echo('Click <a href = "index.php">here</a> to return to the main page or <a href = "acc_settings.php"> here</a> to control your alarm settings');
+		echo('Click <a href = "index.php">here</a> to return to the main page or <a href = "user_acc.php"> here</a> to control your alarm settings');
 	}
 ?>
 </body>
