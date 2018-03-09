@@ -249,10 +249,10 @@ def user_interface():
             break
         else:
             #print("...")
-
-    with open("My Timetable.html") as f:
+            pass
+        with open("My Timetable.html") as f:
         #Scrapes the html to make it easier to deal with
-        lectures = scrape_page(f.read())
+            lectures = scrape_page(f.read())
         for lecture in lectures:
             start=lecture["start_time"].strftime("%Y-%m-%dT%H:%M:%SZ")
             end=lecture["end_time"].strftime("%Y-%m-%dT%H:%M:%SZ")

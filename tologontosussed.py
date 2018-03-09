@@ -29,7 +29,7 @@ def main():
     if (int(semcheck.day)>21 and int(semcheck.month)==1) or 7>int(semcheck.month)>1:
         driver.get("https://timetable.soton.ac.uk/Home/Semester/2/")
     elif(6<int(semcheck.month)<9):
-        driver.quit()
+        #driver.quit()
         #print("It's the summer you don't need a timetable")
         for var in range(1,8):
             a=datetime.date.today()+datetime.timedelta(var)
@@ -78,8 +78,8 @@ def main():
     with open('My Timetable.html','w') as f:
         f.write(source_code)
 
-    driver.quit()
-    timetable_converter.main() #Converts the downloaded sussed timetable into ics
+    #driver.quit()
+    #timetable_converter.main() #Converts the downloaded sussed timetable into ics
 
     #print("Done!!")
 if __name__ == '__main__':
